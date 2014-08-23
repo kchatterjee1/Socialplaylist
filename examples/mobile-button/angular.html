@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AngularJS</title>
+    <meta charset="utf-8">
+    <link href="../content/shared/styles/examples-offline.css" rel="stylesheet">
+    <link href="../../styles/kendo.common.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.rtl.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.default.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.dataviz.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.dataviz.default.min.css" rel="stylesheet">
+    <script src="../../js/jquery.min.js"></script>
+    <script src="../../js/angular.min.js"></script>
+    <script src="../../js/kendo.all.min.js"></script>
+    <script src="../content/shared/js/console.js"></script>
+    <script>
+        
+    </script>
+    
+    
+</head>
+<body>
+    
+        <a class="offline-button" href="../index.html">Back</a>
+    
+    <div id="example" ng-app="KendoDemos">
+    <div class="demo-section k-content" ng-controller="MyCtrl" style="width: 500px;">
+        <h4>Mobile buttons</h4>
+        <p>
+            <button kendo-mobile-button k-on-click="click()">Regular button</button> 
+            <button kendo-mobile-button k-icon="'home'" k-on-click="click()">Icon button</button>
+        </p>
+    </div>
+</div>
+
+<script>
+  angular.module("KendoDemos", [ "kendo.directives" ]);
+function MyCtrl($scope) {
+  $scope.click = function() {
+    alert("Clicked");
+  };
+}
+
+</script>
+
+
+    
+    
+</body>
+</html>

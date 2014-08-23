@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Events</title>
+    <meta charset="utf-8">
+    <link href="../content/shared/styles/examples-offline.css" rel="stylesheet">
+    <link href="../../styles/kendo.common.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.rtl.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.default.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.dataviz.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.dataviz.default.min.css" rel="stylesheet">
+    <script src="../../js/jquery.min.js"></script>
+    <script src="../../js/angular.min.js"></script>
+    <script src="../../js/kendo.all.min.js"></script>
+    <script src="../content/shared/js/console.js"></script>
+    <script>
+        
+    </script>
+    
+    
+</head>
+<body>
+    
+        <a class="offline-button" href="../index.html">Back</a>
+    
+            
+        <div id="example">
+            
+            <div id="diagram"></div>
+
+            <script>
+                function createDiagram() {
+                    $("#diagram").kendoDiagram({
+                        dataSource: new kendo.data.HierarchicalDataSource({
+                            data: data,
+                            schema: {
+                                model: {
+                                    children: "items"
+                                }
+                            }
+                        }),
+                        layout: {
+                            type: "layered"
+                        },
+                        shapeDefaults: {
+                            visual: visualTemplate
+                        },
+                        connectionDefaults: {
+                            stroke: {
+                                color: "#979797",
+                                width: 2
+                            }
+                        },
+                        itemRotate: onItemRotate,
+                        pan: onPan,
+                        select: onSelect,
+                        zoomStart: onZoomStart,
+                        zoomEnd: onZoomEnd,
+                        click: onClick
+
+                    });
+
+                    var diagram = $("#diagram").getKendoDiagram();
+                    diagram.bringIntoView(diagram.shapes);
+                }
+
+                function onItemRotate(e) {
+                    var rotation = e.item.rotate();
+                    kendoConsole.log("Rotate - angle: " + rotation.angle + " center: " + rotation.x + "," + rotation.y);
+                }
+
+                function onPan(e) {
+                    kendoConsole.log("Pan: " + e.pan.toString());
+                }
+
+                function onSelect(e) {
+                    var action;
+                    var items;
+                    if (e.selected.length) {
+                        action = "Selected";
+                        items = e.selected;
+                    } else if (e.deselected.length) {
+                        action = "Deselected";
+                        items = e.deselected;
+                    }
+
+                    kendoConsole.log(action + ": " + items.length);
+                }
+
+                function onZoomStart(e) {
+                    kendoConsole.log("Zoom start: " + e.zoom);
+                }
+
+                function onZoomEnd(e) {
+                    kendoConsole.log("Zoom end: " + e.zoom);
+                }
+
+                function onClick(e) {
+                    kendoConsole.log("Click: " + elementText(e.item));
+                }
+
+                var diagram = kendo.dataviz.diagram;
+                var Shape = diagram.Shape;
+                var Connection = diagram.Connection;
+                var Point = diagram.Point;
+
+                function elementText(element) {
+                    var text;
+                    if (element instanceof Shape) {
+                        text = dataItemName(element.dataItem);
+                    } else if (element instanceof Point) {
+                        text = "(" + element.x + "," + element.y + ")";
+                    } else if (element instanceof Connection) {
+                        var source = element.source();
+                        var target = element.target();
+                        var sourceElement = source.shape || source;
+                        var targetElement = target.shape || target;
+                        text = elementText(sourceElement) + " - " + elementText(targetElement);
+                    }
+                    return text;
+                }
+
+                function dataItemName(dataItem) {
+                    return dataItem.firstName + " " + dataItem.lastName;
+                }
+
+                var data = [{
+                    firstName: "Antonio",
+                    lastName: "Moreno",
+                    image: "antonio.jpg",
+                    title: "Team Lead",
+                    colorScheme: "#1696d3",
+                    items: [{
+                        firstName: "Elizabeth",
+                        image: "elizabeth.jpg",
+                        lastName: "Brown",
+                        title: "Design Lead",
+                        colorScheme: "#ef6944",
+                        items: [{
+                            firstName: "Ann",
+                            lastName: "Devon",
+                            image: "ann.jpg",
+                            title: "UI Designer",
+                            colorScheme: "#ef6944"
+                        }]
+                    }, {
+                        firstName: "Diego",
+                        lastName: "Roel",
+                        image: "diego.jpg",
+                        title: "QA Engineer",
+                        colorScheme: "#ee587b",
+                        items: [{
+                            firstName: "Fran",
+                            lastName: "Wilson",
+                            image: "fran.jpg",
+                            title: "QA Intern",
+                            colorScheme: "#ee587b"
+                        }]
+                    }, {
+                        firstName: "Felipe",
+                        lastName: "Izquiedro",
+                        image: "felipe.jpg",
+                        title: "Senior Developer",
+                        colorScheme: "#75be16",
+                        items: [{
+                            firstName: "Daniel",
+                            lastName: "Tonini",
+                            image: "daniel.jpg",
+                            title: "Developer",
+                            colorScheme: "#75be16"
+                        }]
+                    }]
+                }];
+
+                function visualTemplate(options) {
+                    var dataviz = kendo.dataviz;
+                    var g = new dataviz.diagram.Group();
+                    var dataItem = options.dataItem;
+
+                    g.append(new dataviz.diagram.Rectangle({
+                        width: 210,
+                        height: 75,
+                        stroke: {
+                            width: 0
+                        },
+                        fill: dataItem.colorScheme
+                    }));
+
+                    g.append(new dataviz.diagram.TextBlock({
+                        text: dataItem.firstName + " " + dataItem.lastName,
+                        x: 85,
+                        y: 20,
+                        color: "#fff"
+                    }));
+
+                    g.append(new dataviz.diagram.TextBlock({
+                        text: dataItem.title,
+                        x: 85,
+                        y: 40,
+                        color: "#fff"
+                    }));
+
+                    g.append(new dataviz.diagram.Image({
+                        source: "../content/dataviz/diagram/people/" + dataItem.image,
+                        x: 3,
+                        y: 3,
+                        width: 68,
+                        height: 68
+                    }));
+
+                    return g;
+                }
+
+                $(document).ready(createDiagram);
+            </script>
+            <div class="box">
+                <h4>Console log</h4>
+                <div class="console"></div>
+            </div>
+        </div>
+        
+
+    
+    
+</body>
+</html>
